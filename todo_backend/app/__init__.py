@@ -2,6 +2,7 @@ from flask import Flask, jsonify, current_app
 from flask_cors import CORS
 from flask_smorest import Api
 import os
+import json
 from pathlib import Path
 
 # Import blueprints
@@ -86,9 +87,9 @@ def export_openapi():
     interfaces_dir.mkdir(parents=True, exist_ok=True)
     target = interfaces_dir / "openapi.json"
     data = api.spec.to_dict()
-    # Write prettified JSON
+    # Write prettified JSON using the standard library for reliability
     target.write_text(
-        current_app.response_class.response_class.dumps(data, indent=2),
+        json.dumps(data, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     return {"message": f"OpenAPI written to {target.as_posix()}"}
